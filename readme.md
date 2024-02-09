@@ -1,6 +1,13 @@
-# Solar Load Shaving On/Off
+# Solar Load Shaving On/Off 
 
-This project aims to implement a solar load shaving system that automatically manages the power consumption of a building based on the available solar energy. The system will turn off non-essential loads when solar energy is insufficient and turn them back on when sufficient solar energy is available.
+
+This project aims to implement a solar load shaving system that automatically manages the power consumption of a home based on the available solar energy. The system will turn off load shaving when solar energy is insufficient and turn it back on when sufficient solar energy is available again.
+
+
+Default: power_value > 200 W  #enables load shaving
+power_value < 199 W  #disables load shaving
+Checks ewvery 15 minutes/900 seconds
+
 
 ## Table of Contents
 
@@ -19,24 +26,24 @@ The Solar Load Shaving On/Off system is designed to optimize the use of solar en
 
 To install and run the Solar Load Shaving On/Off system, follow these steps:
 
-1. Clone the repository: `git clone https://github.com/your-username/solar-load-shaving.git`
+1. Clone the repository: `https://github.com/KPKev/Solar-Load-Shaving-on-off`
 2. Install the required dependencies: `npm install`
 3. Configure the system (see [Configuration](#configuration) section)
-4. Start the system: `npm start`
+4. Start the system: `pip .\Load_Shaving_Controller.py`
 
 ## Usage
 
-Once the system is up and running, it will continuously monitor the solar energy production and the power consumption of the building. Based on the available solar energy, the system will automatically turn off non-essential loads to reduce the reliance on the grid.
+Once the system is up and running, it will continuously monitor the solar energy production. Based on the available solar energy, the system will automatically turn off load shaving to reduce the reliance on the grid and save money.
 
 ## Configuration
 
 The Solar Load Shaving On/Off system can be configured using the following parameters:
 
-- `solar_threshold`: The minimum solar energy level required to keep the non-essential loads turned on. Default: 50%.
-- `grid_threshold`: The maximum grid power consumption allowed before turning off non-essential loads. Default: 80%.
-- `load_list`: A list of non-essential loads that can be turned off. Default: [load1, load2, load3].
+- `power_vaule`: The minimum solar energy level required load shaving to be turned on. Default: 200 W
 
-To configure the system, modify the `config.json` file located in the root directory of the project.
+
+
+To configure the system, modify the `Load_Shaving_Controller.py` file located in the root directory of the project.
 
 ## Contributing
 
