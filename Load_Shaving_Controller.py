@@ -85,6 +85,7 @@ def login_and_extract():
             print("")
             print("Accept and Agree button not found or not clickable.")
             print("")
+            time.sleep(2)
         print("Waiting for page to load... just one moment")
         print("")
         time.sleep(8)  # Adjusted comment to match the actual wait time
@@ -101,11 +102,12 @@ def login_and_extract():
         print("")
         # Navigation and interaction logic
         print("Navigating to 'System Devices'...")
+        time.sleep(2)
         print("")
         WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.LINK_TEXT, "System Devices"))).click()
         print("")
         print("Navigated to 'System Devices' successfully.")
-        time.sleep(1)
+        time.sleep(4)
         print("")
         print("Clicking on 'CSW (0)'...")
         print("")
@@ -113,7 +115,7 @@ def login_and_extract():
         print("")
         print("Clicked on 'CSW (0)' successfully.")
         print("")
-        time.sleep(1)
+        time.sleep(2)
         print("")
 
         print("Navigating to 'Settings' within 'CSW (0)'...")
@@ -122,7 +124,7 @@ def login_and_extract():
         print("")
         print("Navigated to 'Settings' within 'CSW (0)' successfully.")
         print("")
-        time.sleep(1)
+        time.sleep(2)
         print("")
         print("Navigating to AC Support'")
         print("")
@@ -153,7 +155,7 @@ def login_and_extract():
         
         power_value = int(data_text.split()[0])
 
-        if power_value >= 200:
+        if power_value >= 100:
         # Press 'DOWN' arrow key to navigate to "Enable"
                 action.send_keys(Keys.DOWN).perform()
         else:
@@ -183,23 +185,23 @@ def login_and_extract():
         print("")
         print(".")
         print("")
-        time.sleep(3)
+        time.sleep(1)
         print("")
         print("..")
         print("")
-        time.sleep(4)
+        time.sleep(2)
         print("")
         print("...")
         print("")
-        time.sleep(5)
+        time.sleep(3)
         print ("Initiating Operation Deep Freeze")
         print("")
-        time.sleep(3)
+        time.sleep(4)
         print("Waiting 15 minutes before the next cycle...")
         print("")
         time.sleep(2)
         print(f"Load Shaving has been adjusted based on the total power value: {power_value}")
-        print("200 W's or more will enable load shaving, otherwise it will be disabled.")
+        print("100 W's or more will enable load shaving, otherwise it will be disabled.")
         print("")
         time.sleep(2)
         print(f"The solar panels are currently producing a total of : {data_text}'s")
