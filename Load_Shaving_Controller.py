@@ -107,6 +107,7 @@ def login_and_extract():
         WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.LINK_TEXT, "System Devices"))).click()
         print("")
         print("Navigated to 'System Devices' successfully.")
+        print("")
         time.sleep(4)
         print("")
         print("Clicking on 'CSW (0)'...")
@@ -134,7 +135,7 @@ def login_and_extract():
         print("Navigated to 'AC Support' successfully.")
         print("")
         time.sleep(1)
-        print("Adjusting 'Load Shave' setting...")
+        print("Checking 'Load Shave' setting...")
         print("")
 
         # Locate the dropdown for "Load Shave" setting
@@ -142,7 +143,7 @@ def login_and_extract():
         load_shaving_dropdown = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, xpath_to_load_shaving_dropdown))
         )
-
+        print("")
         # Click the dropdown to expand it
         load_shaving_dropdown.click()
 
@@ -158,9 +159,23 @@ def login_and_extract():
         if power_value >= 100:
         # Press 'DOWN' arrow key to navigate to "Enable"
                 action.send_keys(Keys.DOWN).perform()
+                print("")
+                print("") 
+                time.sleep(2)               
+                print ("LOAD SHAVE has been [-ENABLED-]")
+                time.sleep(4)
+                print("")
+                print("")
         else:
     # Press 'UP' arrow key if needed, depending on the dropdown's default state
             action.send_keys(Keys.UP).perform()
+            print("")
+            print("")
+            time.sleep(2)
+            print ("LOAD SHAVE has been [-DISABLED-]")
+            time.sleep(4)
+            print("")
+            print("")
 
         # After highlighting the option, try clicking the dropdown again to select
         load_shaving_dropdown.click()
@@ -174,6 +189,7 @@ def login_and_extract():
         EC.element_to_be_clickable((By.XPATH, write_button_xpath))
         )
         write_button.click()
+        time.sleep(2)
         print("")
         print("Changes saved successfully.")
         print("")
