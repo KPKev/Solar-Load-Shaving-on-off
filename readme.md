@@ -1,5 +1,7 @@
 # Solar Load Shaving & AC Support Mode On/Off
 
+# Schneider Electric
+## (Device): SW 4024 3.4 kW Solar Hybrid Inverter 120/240 Vac / 24 Vdc
 This repository houses **KPKev's** evolving solution for **automating** and **controlling** solar inverter settings—namely **Load Shaving** and **AC Support** modes—through a **headless** Selenium web interface.
 
 ---
