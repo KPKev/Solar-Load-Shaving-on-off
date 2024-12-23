@@ -82,13 +82,13 @@ cd Solar-Load-Shaving-on-off
 python solar_controller.py
 
 **Answer the startup prompts:** 
--IP & port of the inverter 
--Solar threshold (watts) 
--Battery thresholds (volts) 
--Re-enable threshold (volts) 
--Cycle interval (minutes, default 15) 
--Whether to reset forced_disable (yes/no) 
--Observe the ASCII-art banner and real-time logs. 
+- IP & port of the inverter 
+- Solar threshold (watts) 
+- Battery thresholds (volts) 
+- Re-enable threshold (volts) 
+- Cycle interval (minutes, default 15) 
+- Whether to reset forced_disable (yes/no) 
+- Observe the ASCII-art banner and real-time logs. 
 
 # 🔄 Workflow Overview
 
@@ -122,26 +122,28 @@ Waits user-specified minutes, then repeats.
 
 ## 🌞 Solar Load Shaving Controller 🚀
 
-**[INFO] Current cycle: Support mode
-[INFO] Extracted voltage: 26.2 V
-[INFO] Power Value (W): 300
-[INFO] Adjusting Load Shaving...
-[INFO] (Load Shaving) Verified successfully: 'Enable'
-[INFO] Adjusting AC Support Mode...
-[INFO] (AC Support Mode) Verified successfully: 'Enable'
-[INFO] All changes applied based on current power and voltage thresholds.
-[INFO] Final Status => Power: 300W, Voltage: 26.2V**
+**- [INFO] Current cycle: Support mode**  
+- **[INFO] Extracted voltage: 26.2 V**  
+- **[INFO] Power Value (W): 300**  
+- **[INFO] Adjusting Load Shaving...**  
+- **[INFO] (Load Shaving) Verified successfully: 'Enable'**  
+- **[INFO] Adjusting AC Support Mode...**  
+- **[INFO] (AC Support Mode) Verified successfully: 'Enable'**  
+- **[INFO] All changes applied based on current power and voltage thresholds.**  
+- **[INFO] Final Status => Power: 300W, Voltage: 26.2V**  
 
-**[INFO] === Cycle Summary ===
-       Mode: Support mode
-       forced_disable: False
-       Battery Voltage: 26.20 V
-       Solar Power: 300 W
-       Load Shaving: Enable
-       AC Support: Enable
-[INFO] =====================**
+**- [INFO] === Cycle Summary ===**  
+  - **Mode: Support mode**  
+  - **forced_disable: False**  
+  - **Battery Voltage: 26.20 V**  
+  - **Solar Power: 300 W**  
+  - **Load Shaving: Enable**  
+  - **AC Support: Enable**  
+
+**- [INFO] =====================**  
 
 **[INFO] Cycle completed. Starting countdown for the next cycle (15 minutes).**
+
 
 # 🚧 Troubleshooting
 
