@@ -1,86 +1,79 @@
-# Solar Load Shaving On/Off 
+# Solar Load Shaving On/Off
 
+This repository houses **KPKev's** evolving solution for **automating** and **controlling** solar inverter settings—namely **Load Shaving** and **AC Support** modes—through a **headless** Selenium web interface.
 
-This project aims to implement a solar load shaving system that automatically manages the power consumption of a home based on the available solar energy. The system will turn off load shaving when solar energy is insufficient and turn it back on when sufficient solar energy is available again.
+---
 
+## Key Features
 
-Default: power_value > 200 W  #enables load shaving
-power_value < 199 W  #disables load shaving
-Checks ewvery 15 minutes/900 seconds
+1. **Battery Voltage Safeguard**  
+   - If the battery drops below a specified threshold, the script **forces both Load Shaving and AC Support to “Disable.”**
 
+2. **Re-Enable Logic**  
+   - The script won’t re-enable these modes until battery voltage reaches a higher “re-enable” threshold, preventing premature load usage that could damage the battery.
 
-## Table of Contents
+3. **User-Friendly Runtime Prompts**  
+   - Configure IP/Port, solar watt threshold, battery thresholds, re-enable voltage, and the countdown interval directly from the terminal when you run the script.
 
-- [Introduction](#introduction)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Configuration](#configuration)
-- [Contributing](#contributing)
-- [License](#license)
+4. **Headless Automation**  
+   - Uses **Selenium** in **headless** mode, so it runs quietly in the background without popping up a Chrome window.
 
-## Introduction
+5. **Cycle Summaries**  
+   - Every “cycle” (interval of time you set), it logs final states, including battery voltage, solar power, Load Shaving setting, AC Support setting, and whether we’re in **“Charge mode”** (forced disabled) or **“Support mode”** (normal logic).
 
-The Solar Load Shaving On/Off system is designed to optimize the use of solar energy in a building. By intelligently managing the power consumption, the system aims to reduce reliance on the grid and maximize the utilization of solar energy.
+---
 
-## Installation
+## Version 2.4
 
-To install and run the Solar Load Shaving On/Off system, follow these steps:
+**v2.4** is the latest major iteration of this script. Key changes include:
 
-1. Clone the repository: `https://github.com/KPKev/Solar-Load-Shaving-on-off`
-2. Install the required dependencies: `npm install`
-3. `pip install selenium`
-This command ensures that the selenium package is installed in the user's Python environment, allowing them to use webdriver, By, WebDriverWait, expected_conditions, Select, Options, TimeoutException, NoSuchElementException, Keys, and ActionChains in their scripts.
+- **Editable Countdown** between cycles (default 15 minutes).  
+- All existing logic from prior versions:
+  - Forced disable below `battery_voltage_threshold`.
+  - Normal logic only resumes above `re_enable_threshold`.
+  - Option to **reset** the “forced_disable” flag at script start.  
+  - Full **ASCII art** banner and **detailed logging**.
 
-`from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.chrome.options import Options
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains`
-For this Python project that uses Selenium and the components listed, all the dependencies related to Selenium can be installed with a single pip command because they are all part of the Selenium package. There's no need to install separate packages for each import statement you've provided, as they all come with the Selenium package once it's installed.
-4. `import time` do not forget to import this at the begining of the script or anything based off of time will not work and/or the app wont start.
+If you’d like to reference older versions (e.g., v2.0, v2.1, etc.), check out the repository’s commit history or branches.
 
-Note on WebDrivers
-Remember, while the Selenium package provides the API for interacting with web browsers, it does not include the WebDrivers (like ChromeDriver for Google Chrome or GeckoDriver for Mozilla Firefox) needed to interface with the actual browser. You will need to download and set up the appropriate WebDriver separately.
+---
 
-### Setting up WebDrivers
+## Requirements
 
-To run Selenium scripts, you must download and set up the appropriate WebDriver for the browser you intend to automate:
+- **Python 3.7+** (recommended)  
+- **Selenium** library  
+- **ChromeDriver** installed (matching your Chrome/Chromium version)  
+- **Google Chrome** (or Chromium) installed  
+- Reliable network connection to the solar inverter
 
-- **Chrome**: Download [ChromeDriver](https://sites.google.com/chromium.org/driver/) and ensure it's in your PATH or specified in your script.
-- **Firefox**: Download [GeckoDriver](https://github.com/mozilla/geckodriver/releases) and ensure it's in your PATH or specified in your script.
+Example install:
 
-For other browsers, please refer to the Selenium documentation for the respective WebDriver download instructions
-5. Configure the system (see [Configuration](#configuration) section)
-6. Start the system: `pip .\Load_Shaving_Controller.py`
+```bash
+pip install selenium
 
-## Usage
+---
 
-Once the system is up and running, it will continuously monitor the solar energy production. Based on the available solar energy, the system will automatically turn on/off load shaving to save money.
+## Ensure your ChromeDriver binary is in your system PATH or in the same directory as the script.
+Script Overview
+solar_controller_2.4.py
+Imports & Globals
 
-## Configuration
+Manages forced-disable state and the default re-enable threshold.
+ASCII Art Display
 
-The Solar Load Shaving On/Off system can be configured using the following parameters:
+Displays the “KPKev presents: The Solar Controller” banner.
+Runtime Prompts
 
-- `power_vaule`: The minimum solar energy level required load shaving to be turned on. Default: 200 W
--`time.sleep(900)`  # 15 minutes app refreshes
+Asks for IP, port, thresholds, cycle interval, reset flag.
+Core Logic
 
+Login to the inverter webpage (headless Selenium).
+Extract battery voltage and solar power.
+If battery < threshold => forcibly disable modes.
+If forced_disable is active, do not re-enable until battery ≥ re-enable threshold.
+Otherwise, toggle modes based on the solar watt threshold.
+Print a cycle summary (battery voltage, final states, etc.).
+Countdown
 
-To configure the system, modify the `Load_Shaving_Controller.py` file located in the root directory of the project.
+Wait for the user-defined number of minutes, then start the next cycle.
 
-## Contributing
-
-Contributions to the Solar Load Shaving On/Off system are welcome. To contribute, follow these steps:
-
-1. Fork the repository
-2. Create a new branch: `git checkout -b feature/your-feature`
-3. Make your changes and commit them: `git commit -m "Add your feature"`
-4. Push to the branch: `git push origin feature/your-feature`
-5. Submit a pull request
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
