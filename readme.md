@@ -47,33 +47,34 @@ If you’d like to reference older versions (e.g., v2.0, v2.1, etc.), check out 
 - Reliable network connection to the solar inverter
 
 Example install:
-
-```bash
 pip install selenium
+
 
 ---
 
 ## Ensure your ChromeDriver binary is in your system PATH or in the same directory as the script.
-Script Overview
+### Script Overview
 solar_controller_2.4.py
 Imports & Globals
 
-Manages forced-disable state and the default re-enable threshold.
-ASCII Art Display
+1. **Manages forced-disable state and the default re-enable threshold.**  
+   
 
-Displays the “KPKev presents: The Solar Controller” banner.
-Runtime Prompts
+2. **ASCII Art Display**  
+   - Displays the “KPKev presents: The Solar Controller” banner.
 
 Asks for IP, port, thresholds, cycle interval, reset flag.
 Core Logic
 
-Login to the inverter webpage (headless Selenium).
-Extract battery voltage and solar power.
-If battery < threshold => forcibly disable modes.
-If forced_disable is active, do not re-enable until battery ≥ re-enable threshold.
-Otherwise, toggle modes based on the solar watt threshold.
-Print a cycle summary (battery voltage, final states, etc.).
-Countdown
 
-Wait for the user-defined number of minutes, then start the next cycle.
+## Runtime Prompts
+
+1. Login to the inverter webpage (headless Selenium).
+2. Extract battery voltage and solar power.
+3. If battery < threshold => forcibly disable modes.
+4. If forced_disable is active, do not re-enable until battery ≥ re-enable threshold.
+5. Otherwise, toggle modes based on the solar watt threshold.
+6. Print a cycle summary (battery voltage, final states, etc.).
+7. **Countdown**
+   - Wait for the user-defined number of minutes, then start the next cycle.
 
