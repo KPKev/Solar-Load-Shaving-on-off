@@ -1,4 +1,4 @@
-# Solar Load Shaving On/Off
+# Solar Load Shaving & AC Support Mode On/Off
 
 This repository houses **KPKev's** evolving solution for **automating** and **controlling** solar inverter settings—namely **Load Shaving** and **AC Support** modes—through a **headless** Selenium web interface.
 
