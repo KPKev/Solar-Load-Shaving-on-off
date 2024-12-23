@@ -44,6 +44,7 @@ def print_current_time_ct():
     now_central = datetime.now(central_tz)
     print(f"[INFO] Current Time (CT): {now_central.strftime('%Y-%m-%d %I:%M:%S %p')}")
 
+
 def countdown(t):
     """
     Displays a real-time countdown for t minutes.
@@ -59,6 +60,7 @@ def countdown(t):
         time.sleep(1)
     print("")  # Move to a new line after countdown completes.
 
+
 def is_reachable(ip, port=80):
     """
     Checks if the IP address is reachable.
@@ -71,6 +73,7 @@ def is_reachable(ip, port=80):
     except OSError:
         print(f"[ERROR] {ip}:{port} is not reachable.")
         return False
+
 
 def set_and_verify_dropdown(
     driver,
@@ -166,6 +169,7 @@ def set_and_verify_dropdown(
 
     return False  # If we get here, we never achieved the desired state
 
+
 def forcibly_disable_both_modes(driver):
     """
     Navigate to AC Support page and forcibly disable
@@ -232,9 +236,6 @@ def forcibly_disable_both_modes(driver):
         label="AC Support Mode (Forced)"
     )
 
-# Global variables to track forced-disable state & threshold
-forced_disable = False
-re_enable_threshold = 26.5
 
 def report_cycle_summary(
     driver,
@@ -289,9 +290,11 @@ def report_cycle_summary(
     print(f"       AC Support: {ac_state}")
     print("[INFO] =====================\n")
 
+
 def login_and_extract(ip, port, solar_threshold, battery_voltage_threshold, re_enable_voltage):
     """
-    Version 2.4
+    Version 2.4 + Battery Voltage Retry Logic
+       + Force disable if we can't get a valid (>0) voltage after 3 tries
 
     1) If "forced_disable" is True, we do NOT re-enable anything unless
        the battery voltage >= re_enable_voltage.
@@ -305,6 +308,10 @@ def login_and_extract(ip, port, solar_threshold, battery_voltage_threshold, re_e
        or "Support mode" (forced_disable=False).
     6) After all is done, we call report_cycle_summary(...) to print a
        final summary for this cycle.
+    7) Battery voltage is now read with up to 3 retries if the text is empty
+       or parsing fails or the voltage is 0, waiting 5 seconds between tries.
+    8) If after 3 attempts the voltage is still invalid/0, forcibly disable 
+       Load Shaving and AC Support, log error, and abort the cycle.
     """
     global forced_disable
     global re_enable_threshold
@@ -389,28 +396,57 @@ def login_and_extract(ip, port, solar_threshold, battery_voltage_threshold, re_e
             return
 
         # -----------------------------
-        # Extract battery voltage (V)
+        # Extract battery voltage (V) with up to 3 retries
         # -----------------------------
-        try:
-            voltage_xpath = (
-                '/html/body/div[1]/div[2]/table/tbody/tr/td[2]/div/div/div/'
-                'div[1]/div[5]/div/div[2]/table/tbody/tr/td[1]/table/tbody/'
-                'tr[1]/td/span'
-            )
-            voltage_element = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, voltage_xpath))
-            )
-            voltage_text = voltage_element.text.strip()
-            voltage_value = float(voltage_text.split()[0])  # Extract numerical value
-            print(f"[INFO] Extracted voltage: {voltage_value} V")
-        except TimeoutException:
-            print("[ERROR] Failed to extract voltage. Check the XPath or page structure.")
+        voltage_value = None
+        voltage_xpath = (
+            '/html/body/div[1]/div[2]/table/tbody/tr/td[2]/div/div/div/'
+            'div[1]/div[5]/div/div[2]/table/tbody/tr/td[1]/table/tbody/'
+            'tr[1]/td/span'
+        )
+
+        for attempt in range(1, 4):
+            try:
+                voltage_element = WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located((By.XPATH, voltage_xpath))
+                )
+                raw_text = voltage_element.text.strip()
+
+                if not raw_text:
+                    print(f"[WARNING] Attempt {attempt}: Extracted empty voltage text. Waiting 5 seconds before retry...")
+                    time.sleep(5)
+                    continue
+
+                extracted = float(raw_text.split()[0])  # parse numerical
+                if extracted == 0.0:
+                    print(f"[WARNING] Attempt {attempt}: Extracted 0V. Waiting 5 seconds before retry...")
+                    time.sleep(5)
+                    continue
+
+                # If we reach here, we have a valid >0 reading
+                voltage_value = extracted
+                print(f"[INFO] Attempt {attempt}: Extracted voltage: {voltage_value} V")
+                break
+
+            except (ValueError, IndexError):
+                print(f"[ERROR] Attempt {attempt}: Could not parse voltage from text: '{raw_text}'.")
+                print("[INFO] Waiting 5 seconds before retry...")
+                time.sleep(5)
+            except TimeoutException:
+                print(f"[ERROR] Attempt {attempt}: Timed out waiting for voltage element.")
+                print("[INFO] Waiting 5 seconds before retry...")
+                time.sleep(5)
+
+        # If after 3 attempts no valid voltage
+        if voltage_value is None:
+            print("[ERROR] Failed to obtain a valid battery voltage after 3 attempts.")
+            print("[INFO] Forcing Load Shaving and AC Support to Disable for safety.")
+            forcibly_disable_both_modes(driver)  # forcibly disable modes
             driver.quit()
             return
-        except (ValueError, IndexError) as e:
-            print(f"[ERROR] Could not parse voltage from text: '{voltage_text}'. Error: {e}")
-            driver.quit()
-            return
+
+        # we have a valid voltage_value now
+        print(f"[INFO] Final Battery Voltage reading: {voltage_value} V")
 
         # ---------------------------------------------------------------
         #   1) If forced_disable is True, check if we can re-enable yet
@@ -612,6 +648,6 @@ def main():
         print(f"\n[INFO] Cycle completed. Starting countdown for the next cycle ({cycle_interval} minutes).")
         countdown(cycle_interval)
 
+
 if __name__ == "__main__":
     main()
-
