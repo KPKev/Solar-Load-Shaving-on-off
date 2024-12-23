@@ -6,75 +6,161 @@ This repository houses **KPKev's** evolving solution for **automating** and **co
 
 ---
 
-# KPKev's Solar Controller (Version 2.4)
+# 🌞 Solar Load Shaving Controller 🚀
 
-**KPKev's Solar Controller** is a Python-based script that automates interactions with a solar inverter web interface. It can:
-- Check battery voltage and solar power levels.
-- Automatically **Enable** or **Disable** Load Shaving and AC Support modes based on custom thresholds.
-- Maintain a "forced disable" state (to protect the battery) until your battery voltage recovers.
-- Prompt for user-configurable settings (IP/port, thresholds, cycle interval).
-- Provide an ASCII-art banner and a summary after each cycle.
+### By **KPKev**  
+**Efficiently manage your solar inverter’s Load Shaving and AC Support Modes. Protect your battery and optimize energy usage.**
 
 ---
 
-## Features
+## 🌟 Features
 
-1. **Voltage Safeguard**  
-   - If your battery dips below a certain voltage (e.g., 25.1 V), the script forces both Load Shaving and AC Support **off** to protect the battery.
+### 🔧 **Core Functionality**
+- Dynamically enables/disables **Load Shaving** and **AC Support Mode** based on:
+  - **Battery Voltage Thresholds**
+  - **Solar Input Power**
 
-2. **Re-Enable Logic**  
-   - Once the voltage rises above your specified threshold (e.g., 26.5 V), the script resumes normal logic.
+### 🛡️ **Battery Protection**
+- **Force Disable Mode**  
+  When battery voltage drops **below** your threshold, both Load Shaving and AC Support are automatically disabled.
+  
+- **Re-Enable Logic**  
+  Normal operation resumes only when the battery voltage rises to a user-configured **Re-enable Voltage Threshold**.  
 
-3. **User-Friendly Prompts**  
-   - You can set the IP, port, solar threshold, battery threshold, **re-enable** voltage, and the script's **countdown interval** (in minutes).
+### 🔄 **Enhanced Voltage Reading**
+- **3 Retries** to obtain a valid (>0 V) battery voltage reading.  
+- If after 3 attempts the voltage is still **invalid (empty or 0 V)**, the script automatically **disables** both modes to protect the battery, then aborts the cycle.
 
-4. **Headless Selenium**  
-   - The script runs in **headless mode** via ChromeDriver/Selenium, so no browser window is displayed.
+### ⏱️ **Custom Cycle Timing**
+- User-adjustable **countdown interval** between cycles (default: **15 minutes**).
 
-5. **ASCII Art Banner**  
-   - Displays a cool ASCII-art intro at the start.
+### 🖥️ **Headless Mode**
+- Operates without displaying a browser window, saving system resources.
 
-6. **Cycle Summaries**  
-   - Each cycle ends with a summary of the battery voltage, current solar power, Load Shaving state, AC Support state, and whether you’re in “Charge mode” or “Support mode.”
-
----
-
-## Requirements
-
-1. **Python 3.7+** (recommended)  
-2. **Selenium** library for Python  
-3. **ChromeDriver** (must match your installed Chrome version)  
-4. **Google Chrome** (or Chromium) installed  
-5. A stable network connection to your solar inverter’s IP
-Example install:
-pip install selenium
-
+### 📊 **Detailed Cycle Summaries**
+- Logs the final status of **Load Shaving** and **AC Support**, along with battery voltage and solar power values, after each cycle.
 
 ---
 
-## Ensure your ChromeDriver binary is in your system PATH or in the same directory as the script.
-### Script Overview
-solar_controller_2.4.py
-Imports & Globals
+## 📝 What’s New in Version 2.4?
 
-1. **Manages forced-disable state and the default re-enable threshold.**  
-   
+1. **3-Retry Mechanism for Battery Voltage**  
+   - Ensures a valid (>0 V) reading is obtained or forces modes **off** if not.  
 
-2. **ASCII Art Display**  
-   - Displays the “KPKev presents: The Solar Controller” banner.
+2. **Editable Settings**  
+   - IP/Port, solar threshold, battery thresholds, **re-enable voltage**, and **cycle interval** can all be **set at startup** via prompts.
 
-Asks for IP, port, thresholds, cycle interval, reset flag.
-Core Logic
+3. **Force Disable Reset**  
+   - Optionally reset the “forced_disable” flag at script launch (default: no).
+
+4. **Cycle Summaries**  
+   - Each cycle ends with a summary of battery voltage, solar power, Load Shaving state, AC Support state, and mode (Charge/Support).
+
+---
+
+## 🛠️ Requirements
+
+- **Python 3.8+**
+- **Selenium** for Python
+- **ChromeDriver** (matching your local Chrome/Chromium version)
+- An accessible **solar inverter** on your local network
+- (Optional) `pytz` library to handle time zones
+
+**Install dependences**
+
+pip install selenium pytz
 
 
-## Runtime Prompts
+# 🚀 Quick Start
+**Clone this repo:**
 
-1. Login to the inverter webpage (headless Selenium).
-2. Extract battery voltage and solar power.
-3. If battery < threshold => forcibly disable modes.
-4. If forced_disable is active, do not re-enable until battery ≥ re-enable threshold.
-5. Otherwise, toggle modes based on the solar watt threshold.
-6. Print a cycle summary (battery voltage, final states, etc.).
-7. **Countdown**
-   - Wait for the user-defined number of minutes, then start the next cycle.
+
+git clone https://github.com/KPKev/Solar-Load-Shaving-on-off.git
+cd Solar-Load-Shaving-on-off
+
+**Run the app:**
+python solar_controller.py
+
+**Answer the startup prompts:** 
+-IP & port of the inverter 
+-Solar threshold (watts) 
+-Battery thresholds (volts) 
+-Re-enable threshold (volts) 
+-Cycle interval (minutes, default 15) 
+-Whether to reset forced_disable (yes/no) 
+-Observe the ASCII-art banner and real-time logs. 
+
+# 🔄 Workflow Overview
+
+**Network Check**
+Verifies that the IP/port are reachable.
+
+**Login & Extraction**
+Logs into the inverter’s web interface, handles popups, retrieves battery voltage & solar power.
+
+**Voltage Retries**
+Tries up to 3 times to obtain a valid (>0 V) battery voltage.
+If unsuccessful, Load Shaving and AC Support get disabled for safety, and the cycle aborts.
+
+**Forced Disable**
+If battery voltage < threshold, automatically turn both modes off and mark forced_disable = True.
+
+***Re-Enable Logic**
+If forced_disable is True but battery voltage ≥ re-enable threshold, reset forced_disable to False and proceed with normal logic.
+
+**Adjust Settings**
+Depending on solar power, either enable or disable Load Shaving & AC Support.
+
+**Cycle Summary**
+Logs final battery voltage, solar power, mode states, etc.
+
+**Countdown**
+Waits user-specified minutes, then repeats.
+
+
+# 🖼️ Example Output
+
+## 🌞 Solar Load Shaving Controller 🚀
+
+**[INFO] Current cycle: Support mode
+[INFO] Extracted voltage: 26.2 V
+[INFO] Power Value (W): 300
+[INFO] Adjusting Load Shaving...
+[INFO] (Load Shaving) Verified successfully: 'Enable'
+[INFO] Adjusting AC Support Mode...
+[INFO] (AC Support Mode) Verified successfully: 'Enable'
+[INFO] All changes applied based on current power and voltage thresholds.
+[INFO] Final Status => Power: 300W, Voltage: 26.2V**
+
+**[INFO] === Cycle Summary ===
+       Mode: Support mode
+       forced_disable: False
+       Battery Voltage: 26.20 V
+       Solar Power: 300 W
+       Load Shaving: Enable
+       AC Support: Enable
+[INFO] =====================**
+
+**[INFO] Cycle completed. Starting countdown for the next cycle (15 minutes).**
+
+# 🚧 Troubleshooting
+
+**Selenium/Timeout Errors**
+Confirm your inverter’s IP/port are correct and reachable.
+Ensure ChromeDriver matches your installed Chrome version.
+
+**No Voltage Reading**
+The script will retry 3 times. If still invalid, it forcibly disables modes and exits.
+
+**Permission/Path Issues**
+Make sure ChromeDriver is executable and on your system’s PATH, or place it alongside solar_controller.py.
+
+# 🙌 Contributing
+Feel free to open issues or pull requests to discuss enhancements or bug fixes. PRs that improve reliability or add new features are welcome.
+
+#📜 License
+**Licensed under the MIT License.
+MIT License
+Copyright (c) 2024 KPKev
+Permission is hereby granted, free of charge, to any person obtaining...**
 
